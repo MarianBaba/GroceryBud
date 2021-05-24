@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import List from './List';
 import Alert from './Alert';
+import { Button, Grow, Paper, TextField, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
 const getLocalStorage = () => {
   let list = localStorage.getItem('list');
@@ -12,6 +14,36 @@ const getLocalStorage = () => {
   }
 }
 
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    textAlign: "center",
+    margin: 50,
+  },
+  title: {
+    fontSize: 50,
+    margin: 30,
+    fontFamily: "Rubik"
+  },
+  btn: {
+    margin: 10,
+    fontSize: 15,
+    backgroundColor: "rgb(70,255,70)",
+    '&:hover': {
+      backgroundColor: "rgb(120,255,120)",
+      boxShadow: "0px 0px 3px grey"
+    },
+  },
+  deleteBtn: {
+    backgroundColor: "red",
+    color: "white",
+    margin: 10,
+    '&:hover': {
+      backgroundColor: "red",
+      boxShadow: "0px 0px 5px grey"
+    },
+  }
+}));
+
 function App() {
 
   const [name, setName] = useState('');
@@ -19,6 +51,8 @@ function App() {
   const [isEditing, setIsEditing] = useState(false);
   const [editID, setEditID] = useState(null);
   const [alert, setAlert] = useState({ show: true, msg: '', type: '' })
+
+  const classes = useStyles();
 
 
   const handleSubmit = (e) => {
@@ -71,22 +105,28 @@ function App() {
   }, [list])
 
   return (
-    <section>
-      <form onSubmit={handleSubmit}>
-        {alert.show && <Alert {...alert} list={list} removeAlert={showAlert} />}
-        <h3>Grocery Bud</h3>
-        <div>
-          <input type="text" placeholder="example eggs" value={name} onChange={(e) => setName(e.target.value)} />
-          <button type="submit">
-            {isEditing ? 'edit' : 'submit'}
-          </button>
-        </div>
-      </form>
-      {list.length > 0 && (<div>
-        <List items={list} removeItem={removeItem} editItem={editItem} />
-        <button onClick={clearList}>Clear Items</button>
-      </div>)}
-    </section>
+    <Grow in>
+      <Paper className={classes.paper}>
+        <section>
+          <form onSubmit={handleSubmit}>
+
+            <Typography className={classes.title}>Grocery Bud</Typography>
+            {alert.show && <Alert {...alert} list={list} removeAlert={showAlert} />}
+            <div>
+              <TextField className={classes.form} variant="outlined" type="text" placeholder="e.g. eggs" value={name} onChange={(e) => setName(e.target.value)} />
+            </div>
+            <Button className={classes.btn} type="submit">
+              {isEditing ? 'edit' : 'submit'}
+            </Button>
+
+          </form>
+          {list.length > 0 && (<div>
+            <List items={list} removeItem={removeItem} editItem={editItem} />
+            <Button className={classes.deleteBtn} onClick={clearList}>Clear Items</Button>
+          </div>)}
+        </section>
+      </Paper>
+    </Grow>
   );
 }
 
